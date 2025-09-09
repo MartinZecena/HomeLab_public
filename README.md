@@ -27,6 +27,7 @@ By building this setup, Im gaining hands-on experience with technologies and too
    - OPNsense 
    - Parrot
    - Kali Linux(arm64)
+   - debian(arm64)
    - VirtualBox
 
  - Hardware:

@@ -27,6 +27,8 @@ Home:192.168.1.0/24 //(**NAS, internet access, AP)
 VLAN10:192.168.10.0/24 //labVLAN (laptop*, pi)[management network]
 VLAN20:192.168.20.0/24 //vulnerableVLAN (pc1, mirror)[no internet access]   
 VLAN30:192.168.30.0/24//monitoringVLAN 
+VLAN40:192.168.40.0/24 //piVLAN(red/blueTeam pi5)[no internet access]
+
 
 **NAS will also be here, since my old NAS doesnt support VLAN security measures were taken:
 deactivation of ssh and firewall rule to block internet trafic
@@ -48,15 +50,15 @@ deactivation of ssh and firewall rule to block internet trafic
 192.168.10.1                                                  |
 192.168.20.1                                                  |
 192.168.30.1                                                  |
-  |                                                           |
+192.168.40.1                                                  |
   |                                                           |--(Home)--> [NAS: 192.168.1.4]
   |                                                           |            [WiFi AP: 192.168.1.3]
   |                                                           |             DHCP: 192.168.1.100-150
   |                                                           |
   |                                                           |--(VLAN 10)--> [Laptop: 192.168.10.2]
-  |                                                           |           --> [RaspPi: 192.168.10.3]
   |                                                           |--(VLAN 20)--> [PC1: 192.168.20.2:8008]
   |                                                           |--(VLAN 30)--> [PC2: 192.168.30.2]
+  |                                                           |--(VLAN 40)--> [RaspPi: 192.168.40.2]
   
  ```
 
@@ -136,7 +138,7 @@ nmcli conn modify <dev> +ipv4.routes “<destination> <gateway>”
 In order to allow the communication between the subnets/vlans we need to create firewall rules
 for each subnet.
 - VLAN10 needs a rule for internet access and DNS.
-- All VLANs need access to VLAN40 for NAS.
+- All VLANs(except vlan 20) need restricted access to Home Vlan for NAS and internet access.
 - VLAN20 has the following rules:
 ![firewall_rules.png](./img/firewall_rules.png)
   lab -> NAS

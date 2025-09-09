@@ -26,10 +26,12 @@
   - 5 ETH ports
   - OS OPNsense
 
-- RaspberryPi 4:
+- RaspberryPi 5:
   - RAM 8GB
   - microSD 128 GB
-  - OS Kali Linux arm64
+  - OS Kali Linux arm64(red team)
+  - OS Debian 13 arm6(blue team)
+
  
 ## Other Hardware
   - switch: TP-Link TL-SG108E - 8 port managed
