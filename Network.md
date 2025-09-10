@@ -186,8 +186,7 @@ OpenVPN configuration checklist:
 
 - all the passwords created were different using at least 12 characters mixing upper lower case letters numbers and special characters a usb with a password manager was used
 
-- ssh connection was disabled for all devices in lab
-- all external communication from NAS was disabled, only through laptop and AP accessible
+- only essential ports from NAS where left open
 - only essencial external communication services are enabled on laptop and RaspberryPi
 - VPN was disabled
 
