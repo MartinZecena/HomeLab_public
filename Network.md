@@ -22,18 +22,19 @@ in order to avoid double Firewall and NAT
 
 
 ## VLAN and subnets
-each vlan has its own subnet for full isolation  
+for isolation purposes almost every device has its own vlan, the following vlans where created:  
 Home:192.168.1.0/24 //(**NAS, internet access, AP)
-VLAN10:192.168.10.0/24 //labVLAN (laptop*, pi)[management network]
-VLAN20:192.168.20.0/24 //vulnerableVLAN (pc1, mirror)[no internet access]   
-VLAN30:192.168.30.0/24//monitoringVLAN 
+VLAN10:192.168.10.0/24 //LabVLAN (laptop*, pi)[management network]
+VLAN20:192.168.20.0/24 //hypervisorVLAN (PC1)
+VLAN25:192.168.25.0/24 //vulnerableVLAN (vulnerable vms)[no internet access]   
+VLAN30:192.168.30.0/24//monitoringVLAN (PC2)
 VLAN40:192.168.40.0/24 //piVLAN(red/blueTeam pi5)[no internet access]
 
 
 **NAS will also be here, since my old NAS doesnt support VLAN security measures were taken:
-deactivation of ssh and firewall rule to block internet trafic
+deactivation of ssh, firewall rule to block internet trafic and only escential ports were left open
 
-*laptop will have access to two vlans, vlan1 for network management and vlan20 for lab work
+*laptop will have access to two vlans, vlan1 for internet access and vlan20 for management 
 
 ![vlan_Configuration](img/vlans.png)
 
@@ -45,10 +46,12 @@ deactivation of ssh and firewall rule to block internet trafic
 [VPN Tunnel: 192.168.5.0/24]
   |
 [Router/Firewall(OPNsense):192.168.1.1]<--(trunk port)-->[Managed Switch: 192.168.1.2]
-(Vlan Gateways)                                               |
+(Vlan Gateways)                                               |VLAN30:192.168.30.0/24 //hypervisorVLAN
+
 192.168.1.1                                                   |
 192.168.10.1                                                  |
 192.168.20.1                                                  |
+192.168.25.1                                                  |
 192.168.30.1                                                  |
 192.168.40.1                                                  |
   |                                                           |--(Home)--> [NAS: 192.168.1.4]
@@ -57,6 +60,7 @@ deactivation of ssh and firewall rule to block internet trafic
   |                                                           |
   |                                                           |--(VLAN 10)--> [Laptop: 192.168.10.2]
   |                                                           |--(VLAN 20)--> [PC1: 192.168.20.2:8008]
+  |                                                           |--(VLAN 25)--> [bridge:192.168.25.2]
   |                                                           |--(VLAN 30)--> [PC2: 192.168.30.2]
   |                                                           |--(VLAN 40)--> [RaspPi: 192.168.40.2]
   
@@ -142,13 +146,18 @@ for each subnet.
 - VLAN20 has the following rules:
 ![firewall_rules.png](./img/firewall_rules.png)
   lab -> NAS
+  monitoring -> NAS
+  Hypervisor -> NAS
+  pi -> NAS
+
   lab -> vulnerable
   lab -> monitoring
+  Lab -> pi
+  Lab -> hypervisor
   lab -> WAN
   AP  -> WAN
 
-these are the only rules that i have since i dont want the devices in any other VLAN to start communication
-with VLAN20 for security reasons.
+these are the only rules that i have since i dont want the devices in any other VLAN to start communication with other devices outside the NAS for security reasons.
 NOTE: for proper communication between the vlans is necessary to set reply-to: disable
 this way the package will take the correct route
 
@@ -175,14 +184,6 @@ OpenVPN configuration checklist:
 
 ## Security measures taken
 - VLANS subnets and IPs where chosen taking functionality and security in account, some limitations in current system (no bridge mode possible, old NAS is not possible to be placed in any VLAN)
-- firewall rules only allow traffic:
-  lab -> NAS
-  lab -> vulnerable
-  lab -> monitoring
-  lab -> WAN
-  AP  -> WAN
-
-  WAN is saddly still connected to the own ISP router/firewall causing double NAT  
 
 - all the passwords created were different using at least 12 characters mixing upper lower case letters numbers and special characters a usb with a password manager was used
 
@@ -190,3 +191,4 @@ OpenVPN configuration checklist:
 - only essencial external communication services are enabled on laptop and RaspberryPi
 - VPN was disabled
 
+- WAN is saddly still connected to the own ISP router/firewall causing double NAT
